@@ -18,16 +18,19 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.get('/api/welcome', function(req,res){
+  res.send("Hello word");
+});
 // your first API endpoint... 
 app.get("/api/timestamp/:date_string?", function (req, res) {
   var date_string = req.params.date_string;
   var checkDate = Date.parse(date_string);
   
-  if(isNaN(date_string) && !isNaN(checkDate)){
-    res.send({unix: new Date(date_string).getTime()/1000, utc: new Date(date_string).toUTCString()});
+  if(isNaN(date_string) && !isNaN(checkDate)){     
+    res.send({ unix: new Date(date_string).getTime(), utc: new Date(date_string).toUTCString()});
   } else if(date_string == null){
     var date_string = new Date();
-    res.send({unix: new Date(date_string).getTime()/1000, utc: new Date(date_string).toUTCString()});
+    res.send({unix: new Date(date_string).getTime(), utc: new Date(date_string).toUTCString()});
   } else {
     res.send({error: "Invalid Date"});
   }
