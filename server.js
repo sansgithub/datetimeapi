@@ -21,24 +21,38 @@ app.get("/", function (req, res) {
 app.get('/api/welcome', function(req,res){
   res.send("Hello word");
 });
-// your first API endpoint... 
-app.get("/api/timestamp/:date_string?", function (req, res) {
-  var date_string = req.params.date_string;
-  var checkDate = Date.parse(date_string);
+
+// app.get("/api/timestamp/", (req, res) => {
+//   res.json({ unix: Date.now(), utc: Date() });
+// });
+
+app.get("/api/timestamp/:date_string?", (req, res) => {
   
-  if(isNaN(date_string) && !isNaN(checkDate)){     
-    res.send({ unix: new Date(date_string).getTime(), utc: new Date(date_string).toUTCString()});
-  } else if(date_string == null){
-    var date_string = new Date();
-    res.send({unix: new Date(date_string).getTime(), utc: new Date(date_string).toUTCString()});
+  let date_string = req.params.date_string;
+  
+  let dateObject = new Date(date_string);
+  
+  if (date_string==null) {
+      dateObject = new Date();
+      res.send({unix: dateObject.getTime(), utc: dateObject.toUTCString()});
+  }
+  
+  if (!isNaN(date_string)) {
+    let dateInt = parseInt(date_string);
+    dateObject = new Date(dateInt);
+    res.json({ unix: dateObject.getTime(), utc: dateObject.toUTCString() });
+    console.log("1");
+  } 
+  
+  else if(dateObject.toString() === "Invalid Date"){
+      res.json({ error: dateObject.toString() });
   } else {
-    res.send({error: "Invalid Date"});
+    console.log("2");
+    res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
   }
 });
 
 
-
-// listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
